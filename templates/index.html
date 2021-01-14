@@ -26,19 +26,21 @@
         html, body {
             margin: 0;
             height: 100%;
+
+
         }
 
         .navigation {
             height: 150px;
-            background-color: yellowgreen;
             text-align: center;
             padding: 30px;
             margin: auto;
+            background-image: url("https://lh3.googleusercontent.com/proxy/RDnBU7Jgg1EV85kJAetKVNDqen9E-NAnthdQRqfYiqxAtEcaubuLH9E1Ung5SZZk_XMPY0Qg2iKNuKel0WL2p_26hXrb5ju_tpc94BL0pHpPkkja3pTaXeA6liIrrNjpbICmkpA");
+            background-position: center;
         }
 
         .content {
             height: calc(100% - 150px);
-            background-color: mediumseagreen;
             display: flex;
             flex-direction: row;
         }
@@ -46,13 +48,13 @@
         .main1 {
             width: 60%;
             height: 100%;
-            background-color: skyblue;
             padding: 50px;
         }
 
         .main2 {
             width: 40%;
             height: 100%;
+
         }
 
         .order_info {
@@ -66,12 +68,15 @@
     </style>
 
     <script>
+        $(document).ready(function () {
+            showOrder()
+        });
 
         function order() {
             let room = $('#order_room').val()
             let phone = $('#order_phonenumber').val()
             let name = $('#order_name').val()
-            let day = $('#order_day').val()
+//            let day = $('#order_day').val()
             let start = $('#order_starttime').val()
             let playtime = $('#order_playtime').val()
             let finish = $('#order_finishtime').val()
@@ -85,17 +90,16 @@
             } else if (name === '') {
                 alert('이름을 입력해 주세요')
                 return
-            } else if (day === '이용할 날을 선택해 주세요.') {
-                alert('날짜를 선택해 주세요')
-                return
+                // } else if (day === '이용할 날을 선택해 주세요.') {
+                //     alert('날짜를 선택해 주세요')
+                //     return
             } else if (start === '') {
                 alert('시작시간을 입력해 주세요')
                 return
-            } else if (playtime === '') {
-                alert('사용시간을 입력해 주세요')
+            } else if (finish === '') {
+                alert('종료시간을 입력해 주세요')
                 return
             }
-            alert('주문되었습니다.');
 
 
             $.ajax({
@@ -109,36 +113,39 @@
                     'start_give': start,
                     'finish_give': finish,
                 },
-                //        success: function (response) {
-                //            if (response["result"] === "success") {
-                ///               alert(response["msg"]);
-                //               window.location.reload();
-                //             }
-                //        }
+                success: function (response) {
+                    if (response["result"] === "success") {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                }
             })
+        }
+
+        function showOrder() {
             $.ajax({
                 type: "GET",
                 url: "/reservation",
                 data: {},
 
                 success: function (response) {
-                    let rows = response['            ']
+                    let rows = response['data']
                     for (let i = 0; i < rows.length; i++) {
                         let row = rows[i]
-                        let day_re = row['day']
+                        let start_re = row['start']
                         let room_re = row['room']
                         let name_re = row['name']
                         let time_re = row['time']
 
                         let temp = `<tr>
-                                        <th scope="row">${day_re}</th>
+                                        <th scope="row">${start_re}</th>
                                         <td>${room_re}</td>
                                         <td>${name_re}</td>
                                         <td>${time_re}</td>
                                     </tr>`
 
 
-                        $('#table').append(temp)
+                        $('#order').append(temp)
                     }
                 }
             })
@@ -163,20 +170,13 @@
                     <th scope="col">사용시간</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-
+                <tbody id="order">
                 </tbody>
             </table>
         </div>
     </div>
     <div class="main2">
-        <div class="order_info">
+        <div class="order_info"><h3> 예약 정보를 입력해 주세요 </h3>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="order_room">예약 룸</label>
@@ -192,8 +192,9 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">전화번호</span>
 
-                <input id="order_phonenumber" type="text" class="form-control" placeholder="" aria-label="Username"
-                       aria-describedby="basic-addon1">
+                <input id="order_phonenumber" type="tel" class="form-control" placeholder=""
+                       aria-label="Username"
+                       aria-describedby="basic-addon1" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}">
             </div>
 
             <div class="input-group mb-3">
@@ -204,27 +205,37 @@
                        aria-describedby="basic-addon1">
             </div>
 
+            <!--            <div class="input-group mb-3">-->
+            <!--                <div class="input-group-prepend">-->
+            <!--                    <label class="input-group-text" for="order_day">이용날짜</label>-->
+            <!--                </div>-->
+            <!--                <select class="custom-select" id="order_day">-->
+            <!--                    <option selected>이용할 날을 선택해 주세요.</option>-->
+            <!--                    <option value="MON">월</option>-->
+            <!--                    <option value="TUE">화</option>-->
+            <!--                    <option value="WED">수</option>-->
+            <!--                    <option value="THU">목</option>-->
+            <!--                    <option value="FRI">금</option>-->
+            <!--                    <option value="SAT">토</option>-->
+            <!--                    <option value="SUN">일</option>-->
+            <!--                </select>-->
+            <!--            </div>-->
+
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <label class="input-group-text" for="order_day">이용날짜</label>
+                    <span class="input-group-text">시작시간</span>
                 </div>
-                <select class="custom-select" id="order_day">
-                    <option selected>이용할 날을 선택해 주세요.</option>
-                    <option value="MON">월</option>
-                    <option value="TUE">화</option>
-                    <option value="WED">수</option>
-                    <option value="THU">목</option>
-                    <option value="FRI">금</option>
-                    <option value="SAT">토</option>
-                    <option value="SUN">일</option>
-                </select>
+                <input id="order_starttime" type="datetime-local" class="form-control" placeholder=""
+                       aria-label="Username"
+                       aria-describedby="basic-addon1">
             </div>
 
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">입실시간</span>
+                    <span class="input-group-text">종료시간</span>
                 </div>
-                <input id="order_starttime" type="text" class="form-control" placeholder="" aria-label="Username"
+                <input id="order_finishtime" type="datetime-local" class="form-control" placeholder=""
+                       aria-label="Username"
                        aria-describedby="basic-addon1">
             </div>
 
@@ -232,15 +243,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">사용시간</span>
                 </div>
-                <input id="order_playtime" type="text" class="form-control" placeholder="" aria-label="Username"
-                       aria-describedby="basic-addon1">
-            </div>
-
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">퇴실시간</span>
-                </div>
-                <input id="order_finishtime" type="text" class="form-control" placeholder="" aria-label="Username"
+                <input id="order_playtime" type="time" class="form-control" placeholder="" aria-label="Username"
                        aria-describedby="basic-addon1">
             </div>
 
