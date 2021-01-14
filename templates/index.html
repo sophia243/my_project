@@ -1,19 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
     <title>예약페이지</title>
+
     <style>
-        .reservation_list {
-            
+
+        html, body {
+            margin: 0;
+            height: 100%;
         }
-        </style>
+
+        .navigation {
+            height: 150px;
+            background-color: yellowgreen;
+            text-align: center;
+            padding: 30px;
+            margin: auto;
+        }
+
+        .content {
+            height: calc(100% - 150px);
+            background-color: mediumseagreen;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main1 {
+            width: 60%;
+            height: 100%;
+            background-color: skyblue;
+            padding: 50px;
+        }
+
+        .main2 {
+            width: 40%;
+            height: 100%;
+        }
+
+        .order_info {
+            width: 80%;
+            margin: 10% auto;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+        }
+    </style>
+
+    <script>
+
+        function order() {
+            let room = $('#order_room').val()
+            let phone = $('#order_phonenumber').val()
+            let name = $('#order_name').val()
+            let day = $('#order_day').val()
+            let start = $('#order_starttime').val()
+            let playtime = $('#order_playtime').val()
+            let finish = $('#order_finishtime').val()
+
+            if (room === '예약할 방을 선택해 주세요.') {
+                alert('방을 선택해 주세요')
+                return
+            } else if (phone === '') {
+                alert('전화번호를 입력해 주세요')
+                return
+            } else if (name === '') {
+                alert('이름을 입력해 주세요')
+                return
+            } else if (day === '이용할 날을 선택해 주세요.') {
+                alert('날짜를 선택해 주세요')
+                return
+            } else if (start === '') {
+                alert('시작시간을 입력해 주세요')
+                return
+            } else if (playtime === '') {
+                alert('사용시간을 입력해 주세요')
+                return
+            }
+            alert('주문되었습니다.');
+
+
+            $.ajax({
+                type: "POST",
+                url: "/reservation",
+                data: {
+                    'room_give': room,
+                    'phone_give': phone,
+                    'name_give': name,
+                    'day_give': day,
+                    'start_give': start,
+                    'finish_give': finish,
+                },
+                //        success: function (response) {
+                //            if (response["result"] === "success") {
+                ///               alert(response["msg"]);
+                //               window.location.reload();
+                //             }
+                //        }
+            })
+            $.ajax({
+                type: "GET",
+                url: "/reservation",
+                data: {},
+
+                success: function (response) {
+                    let rows = response['            ']
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i]
+                        let day_re = row['day']
+                        let room_re = row['room']
+                        let name_re = row['name']
+                        let time_re = row['time']
+
+                        let temp = `<tr>
+                                        <th scope="row">${day_re}</th>
+                                        <td>${room_re}</td>
+                                        <td>${name_re}</td>
+                                        <td>${time_re}</td>
+                                    </tr>`
+
+
+                        $('#table').append(temp)
+                    }
+                }
+            })
+        }
+
+
+    </script>
 </head>
 <body>
-<div class="reservation_list"> 예약확인 </div>
-<div class="reservation_info"> 예약정보 입력 </div>
+<div class="navigation">
+    <span><h1> 열공 스터디카페 </h1></span>
+</div>
+<div class="content">
+    <div class="main1">
+        <div class="order_list"><h3>현재 예약 현황 </h3>
+            <table class="table">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">날짜</th>
+                    <th scope="col">예약룸</th>
+                    <th scope="col">예약자</th>
+                    <th scope="col">사용시간</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
 
-<button class="reservation">예약하기</button>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="main2">
+        <div class="order_info">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="order_room">예약 룸</label>
+                </div>
+                <select class="custom-select" id="order_room">
+                    <option selected>예약할 방을 선택해 주세요.</option>
+                    <option value="Red">Red</option>
+                    <option value="Orange">Orange</option>
+                    <option value="Yellow">Yellow</option>
+                </select>
+            </div>
+
+            <div class="input-group-prepend">
+                <span class="input-group-text">전화번호</span>
+
+                <input id="order_phonenumber" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">예약자 이름</span>
+                </div>
+                <input id="order_name" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="order_day">이용날짜</label>
+                </div>
+                <select class="custom-select" id="order_day">
+                    <option selected>이용할 날을 선택해 주세요.</option>
+                    <option value="MON">월</option>
+                    <option value="TUE">화</option>
+                    <option value="WED">수</option>
+                    <option value="THU">목</option>
+                    <option value="FRI">금</option>
+                    <option value="SAT">토</option>
+                    <option value="SUN">일</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">입실시간</span>
+                </div>
+                <input id="order_starttime" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">사용시간</span>
+                </div>
+                <input id="order_playtime" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">퇴실시간</span>
+                </div>
+                <input id="order_finishtime" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">예상금액</span>
+                </div>
+                <input id="order_price" type="text" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <button onclick="order()" type="button" class="btn btn-primary">Primary</button>
+        </div>
+
+    </div>
+
+
+</div>
+
 
 </body>
 </html>
