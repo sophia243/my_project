@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -18,29 +15,26 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
-
     <title>예약페이지</title>
-
     <style>
-
         html, body {
             margin: 0;
             height: 100%;
-
-
         }
 
         .navigation {
-            height: 150px;
+            height: 250px;
             text-align: center;
             padding: 30px;
             margin: auto;
-            background-image: url("https://lh3.googleusercontent.com/proxy/RDnBU7Jgg1EV85kJAetKVNDqen9E-NAnthdQRqfYiqxAtEcaubuLH9E1Ung5SZZk_XMPY0Qg2iKNuKel0WL2p_26hXrb5ju_tpc94BL0pHpPkkja3pTaXeA6liIrrNjpbICmkpA");
+            background-image: url("../static/pic.jpg");
             background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         .content {
-            height: calc(100% - 150px);
+            height: calc(100% - 250px);
             display: flex;
             flex-direction: row;
         }
@@ -54,7 +48,6 @@
         .main2 {
             width: 40%;
             height: 100%;
-
         }
 
         .order_info {
@@ -63,8 +56,8 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-
         }
+
     </style>
 
     <script>
@@ -78,9 +71,8 @@
             let name = $('#order_name').val()
 //            let day = $('#order_day').val()
             let start = $('#order_starttime').val()
-            let playtime = $('#order_playtime').val()
+            // let playtime = $('#order_playtime').val()
             let finish = $('#order_finishtime').val()
-
             if (room === '예약할 방을 선택해 주세요.') {
                 alert('방을 선택해 주세요')
                 return
@@ -90,9 +82,9 @@
             } else if (name === '') {
                 alert('이름을 입력해 주세요')
                 return
-                // } else if (day === '이용할 날을 선택해 주세요.') {
-                //     alert('날짜를 선택해 주세요')
-                //     return
+            } else if (day === '') {
+                alert('날짜를 선택해 주세요')
+                return
             } else if (start === '') {
                 alert('시작시간을 입력해 주세요')
                 return
@@ -100,8 +92,6 @@
                 alert('종료시간을 입력해 주세요')
                 return
             }
-
-
             $.ajax({
                 type: "POST",
                 url: "/reservation",
@@ -127,31 +117,47 @@
                 type: "GET",
                 url: "/reservation",
                 data: {},
-
                 success: function (response) {
                     let rows = response['data']
                     for (let i = 0; i < rows.length; i++) {
                         let row = rows[i]
-                        let start_re = row['start']
+                        let day_re = row['day']
                         let room_re = row['room']
                         let name_re = row['name']
-                        let time_re = row['time']
-
+                        let start_re = row['start']
+                        let finish_re = row['finish']
                         let temp = `<tr>
-                                        <th scope="row">${start_re}</th>
+                                        <th scope="row">${day_re}</th>
                                         <td>${room_re}</td>
                                         <td>${name_re}</td>
-                                        <td>${time_re}</td>
+                                        <td>${start_re} ~ ${finish_re}</td>
                                     </tr>`
-
-
                         $('#order').append(temp)
                     }
                 }
             })
         }
 
-
+        function timeChanged() {
+            let start = $('#order_starttime').val()
+            let finish = $('#order_finishtime').val()
+            let startHour = Number(start.split(':')[0])
+            let startMinute = Number(start.split(':')[1])
+            let finishHour = Number(finish.split(':')[0])
+            let finishMinute = Number(finish.split(':')[1])
+            let startTotalMinute = startHour * 60 + startMinute
+            let finishTotalMinute = finishHour * 60 + finishMinute
+            let differenceMinute = finishTotalMinute - startTotalMinute
+            if (differenceMinute < 0) {
+                alert('종료시간은 시작시간보다 빠를 수 없습니다.')
+                $('#order_finishtime').val(null)
+                return
+            }
+            let hour = parseInt(differenceMinute / 60)
+            let minute = differenceMinute % 60
+            $('#order_playtime').text(`${hour}:${minute}`)
+            $('#order_price').text(`${differenceMinute*150}원`)
+        }
     </script>
 </head>
 <body>
@@ -188,15 +194,12 @@
                     <option value="Yellow">Yellow</option>
                 </select>
             </div>
-
-            <div class="input-group-prepend">
+            <div class="input-group mb-3">
                 <span class="input-group-text">전화번호</span>
-
                 <input id="order_phonenumber" type="tel" class="form-control" placeholder=""
                        aria-label="Username"
                        aria-describedby="basic-addon1" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}">
             </div>
-
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">예약자 이름</span>
@@ -204,7 +207,6 @@
                 <input id="order_name" type="text" class="form-control" placeholder="" aria-label="Username"
                        aria-describedby="basic-addon1">
             </div>
-
             <!--            <div class="input-group mb-3">-->
             <!--                <div class="input-group-prepend">-->
             <!--                    <label class="input-group-text" for="order_day">이용날짜</label>-->
@@ -220,49 +222,46 @@
             <!--                    <option value="SUN">일</option>-->
             <!--                </select>-->
             <!--            </div>-->
-
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">날짜</span>
+                </div>
+                <input type="date" id="order_time" name="trip-start">
+            </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">시작시간</span>
                 </div>
-                <input id="order_starttime" type="datetime-local" class="form-control" placeholder=""
-                       aria-label="Username"
+                <input id="order_starttime" type="time" class="form-control" placeholder="" aria-label="Username"
                        aria-describedby="basic-addon1">
             </div>
-
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">종료시간</span>
                 </div>
-                <input id="order_finishtime" type="datetime-local" class="form-control" placeholder=""
-                       aria-label="Username"
-                       aria-describedby="basic-addon1">
+                <input id="order_finishtime" type="time" class="form-control" placeholder="" aria-label="Username"
+                       aria-describedby="basic-addon1" onchange="timeChanged()" min="15:30">
             </div>
-
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">사용시간</span>
                 </div>
-                <input id="order_playtime" type="time" class="form-control" placeholder="" aria-label="Username"
-                       aria-describedby="basic-addon1">
+                <div id="order_playtime"></div>
+                <!--                <input id="order_playtime" type="time" class="form-control" placeholder="" aria-label="Username"-->
+                <!--                       aria-describedby="basic-addon1">-->
             </div>
-
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">예상금액</span>
                 </div>
-                <input id="order_price" type="text" class="form-control" placeholder="" aria-label="Username"
-                       aria-describedby="basic-addon1">
+                <div id="order_price"> </div>
+<!--                <input id="order_price" class="form-control" placeholder="" aria-label="Username"-->
+<!--                       aria-describedby="basic-addon1">-->
             </div>
-
-            <button onclick="order()" type="button" class="btn btn-primary">Primary</button>
+            <button onclick="order()" type="button" class="btn btn-primary">예약하기</button>
         </div>
-
     </div>
-
-
 </div>
-
-
 </body>
 </html>
+
