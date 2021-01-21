@@ -33,6 +33,12 @@
             background-size: cover;
         }
 
+        .title {
+            color: white;
+            text-align: center;
+            margin-top: 100px;
+        }
+
         .content {
             height: calc(100% - 250px);
             display: flex;
@@ -69,7 +75,7 @@
             let room = $('#order_room').val()
             let phone = $('#order_phonenumber').val()
             let name = $('#order_name').val()
-//            let day = $('#order_day').val()
+            let day = $('#order_day').val()
             let start = $('#order_starttime').val()
             // let playtime = $('#order_playtime').val()
             let finish = $('#order_finishtime').val()
@@ -156,13 +162,13 @@
             let hour = parseInt(differenceMinute / 60)
             let minute = differenceMinute % 60
             $('#order_playtime').text(`${hour}:${minute}`)
-            $('#order_price').text(`${differenceMinute*150}원`)
+            $('#order_price').text(`${differenceMinute * 150}원`)
         }
     </script>
 </head>
 <body>
 <div class="navigation">
-    <span><h1> 열공 스터디카페 </h1></span>
+    <span class="title"><h1> 열공 스터디카페 </h1></span>
 </div>
 <div class="content">
     <div class="main1">
@@ -195,7 +201,7 @@
                 </select>
             </div>
             <div class="input-group mb-3">
-                <span class="input-group-text">전화번호</span>
+                <span class="input-group-text">  전화번호  </span>
                 <input id="order_phonenumber" type="tel" class="form-control" placeholder=""
                        aria-label="Username"
                        aria-describedby="basic-addon1" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}">
@@ -226,7 +232,9 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">날짜</span>
                 </div>
-                <input type="date" id="order_time" name="trip-start">
+                <input type="date" id="order_day" name="trip-start" class="form-control" placeholder=""
+                       aria-label="Username"
+                       aria-describedby="basic-addon1">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -246,7 +254,8 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">사용시간</span>
                 </div>
-                <div id="order_playtime"></div>
+                <div id="order_playtime" class="form-control" placeholder="" aria-label="Username"
+                     aria-describedby="basic-addon1"></div>
                 <!--                <input id="order_playtime" type="time" class="form-control" placeholder="" aria-label="Username"-->
                 <!--                       aria-describedby="basic-addon1">-->
             </div>
@@ -254,9 +263,11 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">예상금액</span>
                 </div>
-                <div id="order_price"> </div>
-<!--                <input id="order_price" class="form-control" placeholder="" aria-label="Username"-->
-<!--                       aria-describedby="basic-addon1">-->
+                <div id="order_price" class="form-control" placeholder="" aria-label="Username"
+                     aria-describedby="basic-addon1">
+                </div>
+                <!--                <input id="order_price" class="form-control" placeholder="" aria-label="Username"-->
+                <!--                       aria-describedby="basic-addon1">-->
             </div>
             <button onclick="order()" type="button" class="btn btn-primary">예약하기</button>
         </div>

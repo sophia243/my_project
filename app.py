@@ -17,6 +17,7 @@ def home():
 def test_get():
     # title_receive = request.args.get('title_give')
     orders = list(db.reservation.find({},{'_id' : False}))
+    # list = object(list(db.reservation.find().sort('day', -1)))
     return jsonify({'result': 'success', 'data': orders})
 
 
